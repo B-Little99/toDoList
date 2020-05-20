@@ -8,7 +8,7 @@ class ToDoList {
     }
 
     static DisplayList(){
-        let listArray = [];
+        let listArray = Storage.GetStoredList();
         
         listArray.forEach(message => {
             ToDoList.AddToList(message);
@@ -17,11 +17,10 @@ class ToDoList {
 
     static AddToList(message){
         let list = document.getElementById("listFormUL");
-
         let div = document.createElement("div");
         div.classList = "listItem";
         div.innerHTML = `
-            <li>${message}</li>
+            <li>${message.message}</li>
             <div class="wrap">
                 <div class="checkboxWrap">
                     <input type="checkbox" id = "check${id}" class = "jsCheckbox" hidden>
@@ -34,7 +33,6 @@ class ToDoList {
         list.appendChild(div);
         checkboxes();
         deleteBtn();
-        
     }
 
     static RemoveFromList(listItem){
@@ -51,6 +49,41 @@ class ToDoList {
     }
 }
 
+class Storage {
+
+    static GetStoredList(){
+       let list;
+        //if the list item contains nothing then an array is created, otherwise it parses the list and returns is so it is useable.
+       if (localStorage.getItem("list") === null){
+           list = [];
+       } else {
+           list = JSON.parse(localStorage.getItem("list"));
+       }
+       return list;
+    }
+    
+    static AddToList(listItem){
+        // This gets the list using the previous method and then pushes the listitem to the list and sets the storage and stringifies it so it can be a string of an array.
+        let list = Storage.GetStoredList();
+        list.push(listItem);
+        localStorage.setItem("list", JSON.stringify(list));
+    }
+    
+    static RemoveFromStorage(message){
+        // This method gets the list and then for each listitem in the arrary it checks to see if the argument message matches the listItem message and then it removes it and sets the local storage again.
+        let list = Storage.GetStoredList();
+        
+        list.forEach( (listItem, index) => {
+            if(listItem.message == message){
+                list.splice(index, 1);
+            }
+        });
+        localStorage.setItem("list", JSON.stringify(list));
+    }
+}
+
+
+
 window.addEventListener("load", ToDoList.DisplayList());
 
 submitBtn.addEventListener("click", (e) => {
@@ -60,7 +93,10 @@ submitBtn.addEventListener("click", (e) => {
         let errorMessage = document.getElementById("errorMessage");
         errorMessage.innerText = "Please input a item for the To Do List.";
     } else {
-        ToDoList.AddToList(message.value);
+        const messageVal = new ToDoList(message.value);
+
+        ToDoList.AddToList(messageVal);
+        Storage.AddToList(messageVal);
         message.value = "";
     }
 });
@@ -69,6 +105,8 @@ function deleteBtn(){
     document.querySelectorAll(".deleteImg").forEach( (item) => {
         item.addEventListener("click", (e) => {
             let target = e.target.parentElement.parentElement;
+            let targetMessage = e.target.parentElement.parentElement.firstElementChild.innerText;
+            Storage.RemoveFromStorage(targetMessage);
             ToDoList.RemoveFromList(target);
         });
     });
