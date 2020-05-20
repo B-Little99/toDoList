@@ -46,8 +46,14 @@ ul {
     flex-direction: row;
     justify-content: space-between;
     align-content: flex-start;
-    margin: 20px;
-    
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.wrap {
+    display: flex;
+    flex-direction: row;
 }
 
 .listItem li {
@@ -114,7 +120,7 @@ button:hover{
     border-bottom: 3px solid white;
     top: 40%;
     left: 50%;
-    transform: translate(-50%, -50%) rotateZ(45deg) scale(3);
+    transform: translate(-50%, -50%) rotateZ(45deg) scale(2);
     opacity: 0;
     transition: all 0.4s
 }
@@ -128,5 +134,15 @@ button:hover{
 .checkboxWrap input:checked ~ .checkmark::after{
     opacity: 1;
     transform: translate(-50%, -50%) rotateZ(45deg) scale(1);
+}
 
+img {
+    width: 30px;
+    height: auto;
+    margin-left: 20px;
+}
+
+.done {
+    text-decoration: line-through;
+    background-color: rgba(109, 236, 109, 0.555);
 }
